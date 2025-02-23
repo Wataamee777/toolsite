@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>システム情報</title>
+    <style>
+        /* システム情報表示サイトのスタイル */
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2em;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        button {
+            padding: 10px 15px;
+            font-size: 1.2em;
+            cursor: pointer;
+            border: 2px solid #007BFF;
+            background-color: #ffffff;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #e0e0e0;
+        }
+
+        section {
+            text-align: left;
+            font-size: 1.2em;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #777;
+        }
+
+        strong {
+            color: #007BFF;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>自分のシステム情報</h1>
+    </header>
+
+    <main>
+        <section>
+            <button onclick="showSystemInfo()">システム情報を表示</button>
+        </section>
+
+        <section id="systemInfoSection" style="display:none;">
+            <h3>システム情報:</h3>
+            <p><strong>OS:</strong> <span id="os"></span></p>
+            <p><strong>OSバージョン:</strong> <span id="osVersion"></span></p>
+            <p><strong>デバイス名:</strong> <span id="deviceName"></span></p>
+            <p><strong>製造業者:</strong> <span id="manufacturer"></span></p>
+            <p><strong>グローバルIP:</strong> <span id="ip"></span></p>
+            <p><strong>おおよその場所:</strong> <span id="location"></span></p>
+            <p><strong>ホスト名:</strong> <span id="hostname"></span></p>
+            <p><strong>クッキー有効:</strong> <span id="cookies"></span></p>
+            <p><strong>JavaScript有効:</strong> <span id="jsEnabled"></span></p>
+            <p><strong>アクセス時間:</strong> <span id="accessTime"></span></p>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 Tool Site</p>
+    </footer>
+
+    <script>
+        // システム情報を表示する関数
+        function showSystemInfo() {
+            // OS情報とOSバージョン
+            const os = getOS();
+            const osVersion = getOSVersion();
+            document.getElementById('os').textContent = os;
+            document.getElementById('osVersion').textContent = osVersion;
+
+            // デバイス名と製造業者
+            const deviceInfo = getDeviceInfo();
+            document.getElementById('deviceName').textContent = deviceInfo.name;
+            document.getElementById('manufacturer').textContent = deviceInfo.manufacturer;
+
+            // グローバルIPアドレス
+            getIP();
+
+            // おおよその場所
+            getLocation();
+
+            // ホスト名
+            const hostname = window.location.hostname;
+            document.getElementById('hostname').textContent = hostname;
+
+            // クッキーの有無
+            const cookiesEnabled = navigator.cookieEnabled ? '有効' : '無効';
+            document.getElementById('cookies').textContent = cookiesEnabled;
+
+            // JavaScriptが有効か
+            const jsEnabled = typeof window !== "undefined" ? '有効' : '無効';
+            document.getElementById('jsEnabled').textContent = jsEnabled;
+
+            // アクセス時間
+            const accessTime = new Date().toLocaleString();
+            document.getElementById('accessTime').textContent = accessTime;
+
+            // システム情報セクションを表示
+            document.getElementById('systemInfoSection').style.display = 'block';
+        }
+
+        // OSを判別する関数
+        function getOS() {
+            const userAgent = navigator.userAgent;
+            if (userAgent.indexOf('Win') !== -1) {
+                return 'Windows';
+            } else if (userAgent.indexOf('Mac') !== -1) {
+                return 'macOS';
+            } else if (userAgent.indexOf('Linux') !== -1) {
+                return 'Linux';
+            } else if (userAgent.indexOf('Android') !== -1) {
+                return 'Android';
+            } else if (userAgent.indexOf('iPhone') !== -1 || userAgent.indexOf('iPad') !== -1) {
+                return 'iOS';
+            } else {
+                return '不明';
+            }
+        }
+
+        // OSバージョンを取得する関数
+        function getOSVersion() {
+            const userAgent = navigator.userAgent;
+            if (navigator.appVersion.indexOf('Win') !== -1) {
+                return navigator.appVersion.split('Windows NT ')[1] || '不明';
+            } else if (navigator.appVersion.indexOf('Mac') !== -1) {
+                return navigator.appVersion.split('Mac OS X ')[1] || '不明';
+            } else if (navigator.appVersion.indexOf('Linux') !== -1) {
+                return 'Linux';
+            }
+            return '不明';
+        }
+
+        // デバイス情報を取得する関数
+        function getDeviceInfo() {
+            const userAgent = navigator.userAgent;
+            let name = '不明';
+            let manufacturer = '不明';
+            
+            if (userAgent.indexOf('Xiaomi') !== -1) {
+                name = 'Xiaomi';
+                manufacturer = 'Xiaomi';
+            } else if (userAgent.indexOf('Samsung') !== -1) {
+                name = 'Samsung';
+                manufacturer = 'Samsung';
+            } else if (userAgent.indexOf('Apple') !== -1) {
+                name = 'Apple';
+                manufacturer = 'Apple';
+            }
+            return { name, manufacturer };
+        }
+
+        // 外部APIを使ってIPアドレスを取得
+        function getIP() {
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('ip').textContent = data.ip;
+                })
+                .catch(error => {
+                    document.getElementById('ip').textContent = 'IPアドレスの取得に失敗しました。';
+                });
+        }
+
+        // おおよその位置を取得する関数
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    fetch(`https://geocode.xyz/${lat},${lon}?json=1`)
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById('location').textContent = data.country || '不明';
+                        })
+                        .catch(error => {
+                            document.getElementById('location').textContent = '位置情報の取得に失敗しました。';
+                        });
+                });
+            } else {
+                document.getElementById('location').textContent = '位置情報の取得に失敗しました。';
+            }
+        }
+    </script>
+</body>
+</html>
