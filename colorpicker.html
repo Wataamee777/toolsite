@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>カラーピッカー</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>カラーピッカー</h1>
+    </header>
+
+    <main>
+        <section>
+            <label for="colorPicker">色を選択:</label>
+            <input type="color" id="colorPicker" value="#000000">
+        </section>
+        
+        <section>
+            <h3>選択した色:</h3>
+            <div id="colorDisplay" class="color-display">
+                <p id="colorCode">#000000</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 Tool Site</p>
+    </footer>
+
+    <script>
+        const colorPicker = document.getElementById('colorPicker');
+        const colorDisplay = document.getElementById('colorDisplay');
+        const colorCode = document.getElementById('colorCode');
+
+        // 色が変更されるたびに表示を更新
+        colorPicker.addEventListener('input', () => {
+            const selectedColor = colorPicker.value;
+            colorDisplay.style.backgroundColor = selectedColor;  // 背景色を変更
+            colorCode.textContent = selectedColor;  // 色コードを更新
+        });
+    </script>
+</body>
+</html>
