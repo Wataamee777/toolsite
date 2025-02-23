@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ファイル形式変換 - Tools</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>ファイル形式変換</h1>
+    </header>
+
+    <main>
+        <!-- MP4 → MP3 -->
+        <section>
+            <h2>MP4 → MP3</h2>
+            <input type="file" id="mp4-input" accept="video/mp4">
+            <button onclick="convertMP4toMP3()">MP4をMP3に変換</button>
+            <a id="mp3-download-link" href="#" download>MP3ファイルをダウンロード</a>
+        </section>
+
+        <!-- WEBP → PNG -->
+        <section>
+            <h2>WEBP → PNG</h2>
+            <input type="file" id="webp-input" accept="image/webp">
+            <button onclick="convertWEBPtoPNG()">WEBPをPNGに変換</button>
+            <a id="png-download-link" href="#" download>PNGファイルをダウンロード</a>
+        </section>
+
+        <!-- PNG → ICO -->
+        <section>
+            <h2>PNG → ICO</h2>
+            <input type="file" id="png-input" accept="image/png">
+            <button onclick="convertPNGtoICO()">PNGをICOに変換</button>
+            <a id="ico-download-link" href="#" download>ICOファイルをダウンロード</a>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 Tool Site</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/ffmpeg.js@0.10.0/ffmpeg.min.js"></script> <!-- ffmpeg.js -->
+    <script>
+        // MP4 → MP3
+        function convertMP4toMP3() {
+            const mp4Input = document.getElementById('mp4-input').files[0];
+            if (!mp4Input) {
+                alert("MP4ファイルを選択してください");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const mp4Data = new Uint8Array(e.target.result);
+                const ffmpeg = FFmpeg.createFFmpeg({ log: true });
+                ffmpeg.load().then(() => {
+                    ffmpeg.FS('writeFile', 'input.mp4', mp4Data);
+                    ffmpeg.run('-i', 'input.mp4', 'output.mp3').then(() => {
+                        const mp3Data = ffmpeg.FS('readFile', 'output.mp3');
+                        const mp3Blob = new Blob([mp3Data.buffer], { type: 'audio/mp3' });
+                        const mp3Url = URL.createObjectURL(mp3Blob);
+                        document.getElementById('mp3-download-link').href = mp3Url;
+                    });
+                });
+            };
+            reader.readAsArrayBuffer(mp4Input);
+        }
+
+        // WEBP → PNG
+        function convertWEBPtoPNG() {
+            const webpInput = document.getElementById('webp-input').files[0];
+            if (!webpInput) {
+                alert("WEBPファイルを選択してください");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const webpBlob = e.target.result;
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+                    canvas.toBlob(function(blob) {
+                        const pngUrl = URL.createObjectURL(blob);
+                        document.getElementById('png-download-link').href = pngUrl;
+                    }, 'image/png');
+                };
+                img.src = URL.createObjectURL(new Blob([webpBlob]));
+            };
+            reader.readAsArrayBuffer(webpInput);
+        }
+
+        // PNG → ICO
+        function convertPNGtoICO() {
+            const pngInput = document.getElementById('png-input').files[0];
+            if (!pngInput) {
+                alert("PNGファイルを選択してください");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const pngData = e.target.result;
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+                    canvas.toBlob(function(blob) {
+                        const icoUrl = URL.createObjectURL(blob);
+                        document.getElementById('ico-download-link').href = icoUrl;
+                    }, 'image/vnd.microsoft.icon');
+                };
+                img.src = URL.createObjectURL(new Blob([pngData]));
+            };
+            reader.readAsArrayBuffer(pngInput);
+        }
+    </script>
+</body>
+</html>
