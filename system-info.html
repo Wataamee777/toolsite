@@ -61,12 +61,80 @@
             document.getElementById('location').textContent = '未対応';
         }
     }
+        async function getDeviceInfo() { const userAgent = navigator.userAgent.toLowerCase(); let name = "不明"; let manufacturer = "不明"; let model = "不明"; let cpu = "取得不可"; let ram = "取得不可";
+
+if (navigator.userAgentData) {
+    try {
+        const ua = await navigator.userAgentData.getHighEntropyValues(["platform", "model", "architecture"]);
+
+        if (ua.platform.includes("Windows")) {
+            name = "Windows PC";
+            manufacturer = "Microsoft / 各メーカー";
+        } else if (ua.platform.includes("Mac")) {
+            name = "Mac";
+            manufacturer = "Apple";
+        } else if (ua.platform.includes("Android")) {
+            name = ua.model || "Android デバイス";
+            manufacturer = "不明 (Android)";
+            model = ua.model || "取得不可";
+        }
+    } catch (error) {
+        console.error("userAgentData の取得に失敗:", error);
+    }
+}
+
+// userAgent で判定（既知のデバイス追加）
+if (userAgent.includes("redmi")) {
+    name = "Xiaomi Redmi";
+    manufacturer = "Xiaomi";
+} else if (userAgent.includes("xiaomi")) {
+    name = "Xiaomi";
+    manufacturer = "Xiaomi";
+} else if (userAgent.includes("samsung")) {
+    name = "Samsung";
+    manufacturer = "Samsung";
+} else if (userAgent.includes("nec")) {
+    name = "NEC PC";
+    manufacturer = "NEC";
+} else if (userAgent.includes("galleria")) {
+    name = "GALLERIA";
+    manufacturer = "ドスパラ";
+} else if (userAgent.includes("huawei")) {
+    name = "Huawei";
+    manufacturer = "Huawei";
+} else if (userAgent.includes("oneplus")) {
+    name = "OnePlus";
+    manufacturer = "OnePlus";
+}
+
+// RAM の取得
+if (navigator.deviceMemory) {
+    ram = navigator.deviceMemory + " GB";
+}
+
+return { name, manufacturer, model, cpu, ram };
+
+}
+
+// デバイス情報を表示 async function displayDeviceInfo() { const info = await getDeviceInfo();
+
+document.getElementById("deviceName").textContent = info.name;
+document.getElementById("manufacturer").textContent = info.manufacturer;
+document.getElementById("model").textContent = info.model;
+document.getElementById("cpu").textContent = info.cpu;
+document.getElementById("ram").textContent = info.ram;
+
+}
+
+// ページ読み込み時に実行 window.onload = displayDeviceInfo;
+
+
 </script>
 
 </head>
 <body>
     <h1>システム情報</h1>
-    <button onclick="showSystemInfo()">情報を取得</button>
+    <li><button onclick="showSystemInfo()">情報を取得</button></li>
     <section id="systemInfoSection" style="display:none;">
         <p><strong>OS:</strong> <span id="os"></span></p>
         <p><strong>OSバージョン:</strong> <span id="osVersion"></span></p>
