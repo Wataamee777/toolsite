@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>テキストを画像に - Tools</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>テキストを画像に変換</h1>
+    </header>
+
+    <main>
+        <textarea id="text-input" placeholder="ここにテキストを入力..."></textarea>
+        <button id="generate-image">画像に変換</button>
+        <canvas id="canvas" style="display:none;"></canvas>
+        <a id="download-link" href="#" download="image.png">画像をダウンロード</a>
+    </main>
+
+    <footer>
+        <p>© 2025 Tool Site</p>
+    </footer>
+
+    <script>
+        const textInput = document.getElementById('text-input');
+        const generateImageButton = document.getElementById('generate-image');
+        const canvas = document.getElementById('canvas');
+        const downloadLink = document.getElementById('download-link');
+
+        generateImageButton.addEventListener('click', function() {
+            const context = canvas.getContext('2d');
+            canvas.width = 500;
+            canvas.height = 200;
+            context.fillStyle = "#fff";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            context.fillStyle = "#000";
+            context.font = "20px Arial";
+            context.fillText(textInput.value, 10, 50);
+
+            const dataUrl = canvas.toDataURL('image/png');
+            downloadLink.href = dataUrl;
+            canvas.style.display = 'block';
+        });
+    </script>
+</body>
+</html>
